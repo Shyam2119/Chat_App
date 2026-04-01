@@ -1,0 +1,78 @@
+services:
+  # Backend Web Service
+  - type: web
+    name: chat-backend
+    env: python
+    region: oregon
+    plan: free
+    rootDir: backend
+    # Install dependencies using pip (psycopg2-binary requires no system dependencies)
+    buildCommand: |
+      python -m pip install -U pip
+      pip install -r requirements.txt
+    # Start the app with gunicorn and eventlet for WebSockets
+    startCommand: gunicorn --worker-class eventlet -w 1 run:app --bind 0.0.0.0:$PORT
+    envVars:
+      - key: FLASK_ENV
+        value: production
+      - key: SECRET_KEY
+        generateValue: true
+      - key: JWT_SECRET_KEY
+        generateValue: true
+      # Connect the PostgreSQL database to the backend
+      - key: DATABASE_URL
+        fromDatabase:
+          name: chat-db
+          property: connectionString
+      # Let the backend know the frontend URL for CORS after the frontend is created
+      # We'll set this to the frontend's Render URL after the first deploy.
+      # E.g., https://chat-frontend-xxxx.onrender.com
+      - key: CORS_ORIGINS
+        value: https://your-frontend-url.onrender.com
+
+  # Frontend Static Site
+  - type: web
+    name: chat-frontend
+    env: node
+    region: oregon
+    plan: free # Note: Static Sites are free
+    rootDir: frontend
+    buildCommand: |
+      npm install
+      CI=false npm run build
+    # React Router needs client-side routing, so rewrite all requests to index.html
+    startCommand: "npm run start" # Not used for static sites, Render serves from publishDir automatically
+    # Render static sites need to know which folder to serve
+    # However, since we defined it as 'web' instead of 'static', it needs a start command.
+    # Actually, a better approach for React on Render is type: static
+    
+    # Let me fix the frontend definition to be a proper Static Site rather than a Web Service
+    
+  # Correct Frontend Static Site Definition
+  - type: static-site
+    name: chat-front
+    region: oregon
+    rootDir: frontend
+    buildCommand: npm install && CI=false npm run build
+    publishPath: build
+    # Handle React Router client-side routing
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html
+    envVars:
+      # Pass the backend URL to the frontend build process
+      # Replace this with your actual backend URL after the backend is created
+      # e.g., https://chat-backend-xxxx.onrender.com
+      - key: REACT_APP_API_URL
+        value: https://your-backend-url.onrender.com
+      - key: REACT_APP_SOCKET_URL
+        value: https://your-backend-url.onrender.com
+
+# PostgreSQL Database
+databases:
+  - name: chat-db
+    region: oregon
+    plan: free
+    databaseName: chatapp
+    user: chatuser
