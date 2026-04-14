@@ -29,7 +29,6 @@ services:
   - type: web
     name: chat-frontend
     runtime: static
-    region: oregon
     rootDir: frontend
     buildCommand: npm install && CI=false npm run build
     staticPublishPath: build
