@@ -1,11 +1,6 @@
-#!/usr/bin/env python3
-"""
-Quick helper to initialize DB tables without using flask-migrate.
-Run this once when setting up a fresh database.
+import eventlet
+eventlet.monkey_patch()
 
-Usage:
-    python init_db.py
-"""
 import os
 from dotenv import load_dotenv
 load_dotenv()

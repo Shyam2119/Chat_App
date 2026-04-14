@@ -11,6 +11,8 @@ services:
       pip install -r requirements.txt
     startCommand: python init_db.py && gunicorn --worker-class eventlet -w 1 run:app --bind 0.0.0.0:$PORT
     envVars:
+      - key: PYTHON_VERSION
+        value: 3.11.10
       - key: FLASK_ENV
         value: production
       - key: SECRET_KEY
