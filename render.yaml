@@ -9,7 +9,7 @@ services:
     buildCommand: |
       python -m pip install -U pip
       pip install -r requirements.txt
-    startCommand: gunicorn --worker-class eventlet -w 1 run:app --bind 0.0.0.0:$PORT
+    startCommand: python init_db.py && gunicorn --worker-class eventlet -w 1 run:app --bind 0.0.0.0:$PORT
     envVars:
       - key: FLASK_ENV
         value: production
