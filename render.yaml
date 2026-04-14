@@ -2,7 +2,7 @@ services:
   # Backend Web Service
   - type: web
     name: chat-backend
-    env: python
+    runtime: python
     region: oregon
     plan: free
     rootDir: backend
@@ -26,12 +26,13 @@ services:
         value: https://your-frontend-url.onrender.com
 
   # Frontend Static Site
-  - type: static
+  - type: web
     name: chat-frontend
+    runtime: static
     region: oregon
     rootDir: frontend
     buildCommand: npm install && CI=false npm run build
-    publishPath: build
+    staticPublishPath: build
     # Handle React Router client-side routing
     routes:
       - type: rewrite
