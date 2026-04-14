@@ -16,7 +16,7 @@ def list_users():
         query = query.filter(
             User.username.ilike(f"%{q}%") | User.email.ilike(f"%{q}%")
         )
-    users = query.limit(30).all()
+    users = query.filter(User.id != int(get_jwt_identity())).limit(30).all()
     return jsonify([u.to_dict() for u in users])
 
 

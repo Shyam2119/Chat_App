@@ -138,6 +138,7 @@ export default function NewChatModal({ onClose }) {
   const [selected, setSelected] = useState([]);
   const [groupName, setGroupName] = useState('');
   const [loading, setLoading] = useState(false);
+  const [errorMsg, setErrorMsg] = useState('');
 
   useEffect(() => {
     const fetchUsers = async () => {
@@ -172,7 +173,9 @@ export default function NewChatModal({ onClose }) {
       const room = await createRoom(payload);
       selectRoom(room);
       onClose();
-    } catch {}
+    } catch (err) {
+      setErrorMsg(err.response?.data?.error || 'Failed to create conversation');
+    }
     setLoading(false);
   };
 
@@ -188,6 +191,21 @@ export default function NewChatModal({ onClose }) {
             onClick={onClose}
           >✕</button>
         </div>
+
+        {errorMsg && (
+          <div style={{
+            background: 'var(--accent-glow)',
+            border: '1px solid var(--accent-border)',
+            color: 'var(--accent-light)',
+            padding: '0.6rem',
+            borderRadius: '8px',
+            fontSize: '0.8rem',
+            marginBottom: '1rem',
+            textAlign: 'center'
+          }}>
+            {errorMsg}
+          </div>
+        )}
 
         <div style={tabsStyle}>
           <button style={tabStyle(tab === 'dm')} onClick={() => { setTab('dm'); setSelected([]); }}>
