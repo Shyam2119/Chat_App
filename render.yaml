@@ -25,7 +25,7 @@ services:
           property: connectionString
       # Placeholder for frontend URL (update after first frontend deploy)
       - key: CORS_ORIGINS
-        value: https://your-frontend-url.onrender.com
+        value: https://chat-frontend-ixw1.onrender.com
 
   # Frontend Static Site
   - type: web
@@ -42,9 +42,9 @@ services:
     envVars:
       # Placeholder for backend URL (update after first backend deploy)
       - key: REACT_APP_API_URL
-        value: https://your-backend-url.onrender.com
+        value: https://chat-backend-mkc1.onrender.com
       - key: REACT_APP_SOCKET_URL
-        value: https://your-backend-url.onrender.com
+        value: https://chat-backend-mkc1.onrender.com
 
 # PostgreSQL Database
 databases:
