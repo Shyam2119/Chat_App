@@ -25,7 +25,7 @@ services:
           property: connectionString
       # Placeholder for frontend URL (update after first frontend deploy)
       - key: CORS_ORIGINS
-        value: https://chat-frontend-ixw1.onrender.com
+        value: "*"
 
   # Frontend Static Site
   - type: web
