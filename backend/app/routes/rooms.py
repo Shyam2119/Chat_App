@@ -144,6 +144,31 @@ def leave_room(room_id):
         room.members.remove(me)
         db.session.commit()
     return jsonify({"message": "Left room"})
+ 
+ 
+@rooms_bp.route("/<int:room_id>", methods=["DELETE"])
+@jwt_required()
+def delete_room(room_id):
+    me = User.query.get(int(get_jwt_identity()))
+    room = Room.query.get_or_404(room_id)
+    
+    if room.is_private:
+        # For DMs, "deleting" just removes the user from the room (hides it for them)
+        if me in room.members:
+            room.members.remove(me)
+            # If both participants leave, the room can be cleaned up
+            if len(room.members) == 0:
+                db.session.delete(room)
+            db.session.commit()
+        return jsonify({"message": "Conversation removed"})
+    else:
+        # For groups, only the creator can delete the entire room
+        if room.created_by == me.id:
+            db.session.delete(room)
+            db.session.commit()
+            return jsonify({"message": "Group deleted"})
+        else:
+            return jsonify({"error": "Only the creator can delete the group. Use 'Leave' instead."}), 403
 
 
 # --------------------------------------------------------------------------- #

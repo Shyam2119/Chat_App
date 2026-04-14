@@ -120,7 +120,7 @@ const descStyle = {
 
 export default function RoomInfoDrawer({ room, onClose }) {
   const { user } = useAuth();
-  const { kickMember, onlineUsers, muteRoom, unmuteRoom, mutedRooms } = useChat();
+  const { kickMember, deleteRoom, onlineUsers, muteRoom, unmuteRoom, mutedRooms } = useChat();
   const [searchQuery, setSearchQuery] = useState('');
   const [searchResults, setSearchResults] = useState([]);
   const [members, setMembers] = useState(room.members || []);
@@ -273,13 +273,41 @@ export default function RoomInfoDrawer({ room, onClose }) {
           </>
         )}
 
-        {/* Leave room */}
-        {!room.isPrivate && (
+        {/* Leave or Delete room */}
+        {!room.isPrivate ? (
+          <>
+            {isCreator ? (
+              <button
+                style={{...actionBtnStyle, background:'rgba(239,68,68,0.1)', color:'var(--danger)', marginTop:'1.5rem'}}
+                onClick={async () => {
+                  if (window.confirm('Are you sure? This will delete the group and ALL messages for everyone.')) {
+                    await deleteRoom(room.id);
+                    onClose();
+                  }
+                }}
+              >
+                Delete Group
+              </button>
+            ) : (
+              <button
+                style={{...actionBtnStyle, background:'rgba(239,68,68,0.1)', color:'var(--danger)', marginTop:'1.5rem'}}
+                onClick={handleLeave}
+              >
+                Leave Room
+              </button>
+            )}
+          </>
+        ) : (
           <button
-            style={{...actionBtnStyle, background:'rgba(239,68,68,0.1)', color:'var(--danger)'}}
-            onClick={handleLeave}
+            style={{...actionBtnStyle, background:'rgba(239,68,68,0.1)', color:'var(--danger)', marginTop:'1.5rem'}}
+            onClick={async () => {
+              if (window.confirm('Remove this conversation from your list?')) {
+                await deleteRoom(room.id);
+                onClose();
+              }
+            }}
           >
-            Leave Room
+            Delete Chat
           </button>
         )}
       </div>

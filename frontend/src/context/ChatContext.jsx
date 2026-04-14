@@ -399,6 +399,12 @@ export function ChatProvider({ children }) {
     if (activeRoom?.id === roomId) setActiveRoom(null);
     if (socket) socket.emit('leave_room', { roomId });
   }, [activeRoom, socket]);
+ 
+  const deleteRoom = useCallback(async (roomId) => {
+    await api.delete(`/api/rooms/${roomId}`);
+    setRooms(prev => prev.filter(r => r.id !== roomId));
+    if (activeRoom?.id === roomId) setActiveRoom(null);
+  }, [activeRoom]);
 
   /* ---------- Add Member ---------- */
   const addMember = useCallback(async (roomId, userId) => {
@@ -426,7 +432,7 @@ export function ChatProvider({ children }) {
       sendMessage, editMessage, deleteMessage,
       markRead, sendTyping,
       addReaction, removeReaction,
-      createRoom, leaveRoom, addMember,
+      createRoom, leaveRoom, deleteRoom, addMember,
       pinMessage, unpinMessage,
       starMessage, unstarMessage,
       forwardMessage,
