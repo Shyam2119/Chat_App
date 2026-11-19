@@ -1,4 +1,15 @@
 from datetime import datetime, timezone
+
+
+def iso_utc(dt):
+    """Timestamps are stored in UTC, but SQLite/Postgres DateTime columns drop the
+    timezone. Without an explicit 'Z' the browser reads them as local time, so a
+    message sent now showed as "5 hours ago" for users in India."""
+    if dt is None:
+        return None
+    if dt.tzinfo is None:
+        dt = dt.replace(tzinfo=timezone.utc)
+    return dt.astimezone(timezone.utc).isoformat().replace("+00:00", "Z")
 import bcrypt
 from .extensions import db
 
@@ -55,8 +66,8 @@ class User(db.Model):
             "statusText": self.status_text,
             "statusEmoji": self.status_emoji,
             "isOnline": self.is_online,
-            "lastSeen": self.last_seen.isoformat() if self.last_seen else None,
-            "createdAt": self.created_at.isoformat() if self.created_at else None,
+            "lastSeen": iso_utc(self.last_seen),
+            "createdAt": iso_utc(self.created_at),
             "theme": self.theme,
         }
         if include_email:
@@ -94,7 +105,7 @@ class Room(db.Model):
             "description": self.description,
             "isPrivate": self.is_private,
             "createdBy": self.created_by,
-            "createdAt": self.created_at.isoformat() if self.created_at else None,
+            "createdAt": iso_utc(self.created_at),
             "members": [m.to_dict() for m in self.members],
             "memberCount": len(self.members),
             "pinnedCount": self.pinned_messages.count() if self.pinned_messages else 0,
@@ -188,8 +199,8 @@ class Message(db.Model):
             "isDeleted": self.is_deleted,
             "readBy": [r.user_id for r in self.read_receipts],
             "reactions": reaction_groups,
-            "createdAt": self.created_at.isoformat() if self.created_at else None,
-            "updatedAt": self.updated_at.isoformat() if self.updated_at else None,
+            "createdAt": iso_utc(self.created_at),
+            "updatedAt": iso_utc(self.updated_at),
         }
 
 

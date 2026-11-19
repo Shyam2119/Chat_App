@@ -1,6 +1,10 @@
 # ⚡ Nexus Chat — Real-Time Chat Application
 
-A full-stack real-time messaging app built with **Python/Flask-SocketIO**, **React**, **MySQL**, and **JWT authentication**.
+A full-stack real-time messaging app built with **Python/Flask-SocketIO**, **React**, **PostgreSQL** and **JWT authentication**.
+
+![Nexus Chat: two users chatting in real time](docs/img/chat.png)
+
+Two users, Alice and Bob, chatting live. The screenshot was taken from two separate browser sessions against a local build.
 
 ---
 
@@ -10,10 +14,11 @@ A full-stack real-time messaging app built with **Python/Flask-SocketIO**, **Rea
 |---|---|
 | Backend | Python, Flask, Flask-SocketIO, Flask-JWT-Extended, Flask-SQLAlchemy |
 | Real-time | WebSockets via Socket.IO (eventlet) |
-| Database | MySQL (SQLite for local dev) |
+| Database | PostgreSQL in production (Render), SQLite for local dev and tests |
 | Auth | JWT (access + refresh tokens) |
 | Frontend | React 18, React Router v6, Socket.IO Client, Axios |
-| Deployment | Render (backend), Vercel/Netlify (frontend) |
+| Deployment | Render blueprint (`render.yaml`): web service, static site and PostgreSQL |
+| Testing | pytest: REST API and Socket.IO events, run in GitHub Actions on every push |
 
 ---
 
@@ -200,6 +205,21 @@ npm start
 
 ---
 
+## 🧪 Tests
+
+```bash
+cd backend
+pip install -r requirements.txt pytest
+SOCKETIO_ASYNC_MODE=threading pytest -q      # Windows PowerShell: $env:SOCKETIO_ASYNC_MODE="threading"; pytest -q
+```
+
+The 13 tests use an in-memory SQLite database and Flask-SocketIO's test client. They cover:
+- registration, login, refresh tokens and password hashing
+- protected routes and DM de-duplication
+- a message sent over the socket reaching the other user and being stored in the history
+- non-members being blocked from posting, bad tokens being refused, and typing indicators
+- a regression test for timestamps: they now carry a UTC `Z`, so a new message no longer shows as "5 hours ago" in India
+
 ## ☁️ Deploy on Render
 
 ### Backend (Web Service)
@@ -211,13 +231,13 @@ npm start
    - `FLASK_ENV=production`
    - `SECRET_KEY=<strong-random-key>`
    - `JWT_SECRET_KEY=<strong-random-key>`
-   - `DATABASE_URL=mysql+pymysql://...` (from Render MySQL addon)
+   - `DATABASE_URL` (Render injects it from the PostgreSQL database in `render.yaml`)
    - `CORS_ORIGINS=https://your-frontend.vercel.app`
 
-### Database (MySQL)
-- Add a **Render MySQL** instance
-- Copy the internal connection string to `DATABASE_URL`
-- Run migrations: `flask --app run:app db upgrade`
+### Database (PostgreSQL)
+- `render.yaml` creates a free Render PostgreSQL database (`chat-db`) and wires it to the backend
+- Tables are created on start by `init_db.py`
+- Note: Render deletes free PostgreSQL databases after 30 days; recreate it, or move to a paid or external database, to keep the demo online
 
 ### Frontend (Vercel / Netlify)
 1. **Root Directory:** `frontend`
@@ -232,7 +252,7 @@ npm start
 - ✅ Real-time messaging with WebSockets
 - ✅ JWT authentication (access + refresh tokens)
 - ✅ Private DMs and group chat rooms
-- ✅ Persistent message history (MySQL/SQLite)
+- ✅ Persistent message history (PostgreSQL/SQLite)
 - ✅ Read receipts with delivery indicators
 - ✅ Online/offline status with last seen
 - ✅ Typing indicators (debounced)
@@ -269,7 +289,7 @@ npm start
 FLASK_ENV=development
 SECRET_KEY=change-me-in-production
 JWT_SECRET_KEY=change-me-in-production
-DATABASE_URL=mysql+pymysql://user:pass@host:3306/chatapp
+DATABASE_URL=postgresql://user:pass@host:5432/chatapp
 CORS_ORIGINS=http://localhost:3000,https://yourapp.vercel.app
 ```
 

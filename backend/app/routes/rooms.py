@@ -3,7 +3,7 @@ from flask_jwt_extended import jwt_required, get_jwt_identity
 from sqlalchemy import func
 from ..extensions import db
 from ..models import (
-    Room, User, Message, ReadReceipt, PinnedMessage, MutedRoom, room_members,
+    Room, User, Message, ReadReceipt, PinnedMessage, MutedRoom, room_members, iso_utc,
 )
 
 rooms_bp = Blueprint("rooms", __name__)
@@ -190,7 +190,7 @@ def get_pins(room_id):
         "id": p.id,
         "message": p.message.to_dict(),
         "pinnedBy": p.user.to_dict() if p.user else None,
-        "pinnedAt": p.pinned_at.isoformat(),
+        "pinnedAt": iso_utc(p.pinned_at),
     } for p in pins])
 
 

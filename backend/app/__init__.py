@@ -1,5 +1,11 @@
-import eventlet
-eventlet.monkey_patch()
+import os
+
+# Production runs on eventlet (gunicorn --worker-class eventlet). Tests and local
+# debugging can set SOCKETIO_ASYNC_MODE=threading to run without it.
+ASYNC_MODE = os.getenv("SOCKETIO_ASYNC_MODE", "eventlet")
+if ASYNC_MODE == "eventlet":
+    import eventlet
+    eventlet.monkey_patch()
 
 from flask import Flask
 from flask_socketio import SocketIO
@@ -27,7 +33,7 @@ def create_app(config_class=Config):
     socketio.init_app(
         app,
         cors_allowed_origins=app.config["CORS_ORIGINS"],
-        async_mode="eventlet",
+        async_mode=ASYNC_MODE,
         logger=False,
         engineio_logger=False,
         ping_timeout=60,

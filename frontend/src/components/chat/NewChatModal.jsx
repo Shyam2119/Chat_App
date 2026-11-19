@@ -254,7 +254,7 @@ export default function NewChatModal({ onClose }) {
               onMouseLeave={e => { if(!selected.find(s=>s.id===u.id)) e.currentTarget.style.background='transparent'; }}
             >
               <img
-                src={u.avatarUrl || `https://api.dicebear.com/7.x/initials/svg?seed=${u.username}`}
+                src={u.avatarUrl || `https://api.dicebear.com/7.x/initials/svg?seed=${encodeURIComponent(u.username || "")}`}
                 alt={u.username}
                 style={avatarStyle}
               />

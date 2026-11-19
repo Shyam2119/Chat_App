@@ -39,3 +39,10 @@ class DevelopmentConfig(Config):
     DEBUG = True
     _dev_url = os.getenv("DATABASE_URL", "sqlite:///chatapp_dev.db")
     SQLALCHEMY_DATABASE_URI = _dev_url.replace("postgres://", "postgresql://", 1)
+
+
+class TestConfig(Config):
+    TESTING = True
+    SQLALCHEMY_DATABASE_URI = "sqlite://"
+    JWT_SECRET_KEY = "test-jwt-secret-that-is-long-enough-for-hs256"
+    SECRET_KEY = "test-secret"

@@ -7,7 +7,7 @@ from jwt.exceptions import InvalidTokenError
 
 from . import socketio
 from .extensions import db
-from .models import User, Room, Message, ReadReceipt, MessageReaction, PinnedMessage
+from .models import User, Room, Message, ReadReceipt, MessageReaction, PinnedMessage, iso_utc
 
 # sid → user_id mapping (in-memory; fine for single-process Render deploy)
 connected_users: dict[str, int] = {}
@@ -68,7 +68,7 @@ def on_disconnect():
             _set_online(user, False)
             emit("user_offline", {
                 "userId": user.id,
-                "lastSeen": user.last_seen.isoformat()
+                "lastSeen": iso_utc(user.last_seen)
             }, broadcast=True, include_self=False)
 
 

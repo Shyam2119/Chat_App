@@ -166,7 +166,7 @@ export default function ProfileModal({ onClose }) {
 
         <div style={avatarRowStyle}>
           <img
-            src={avatarUrl || `https://api.dicebear.com/7.x/initials/svg?seed=${user?.username}`}
+            src={avatarUrl || `https://api.dicebear.com/7.x/initials/svg?seed=${encodeURIComponent(user?.username || "")}`}
             alt={user?.username}
             style={avatarImgStyle}
           />

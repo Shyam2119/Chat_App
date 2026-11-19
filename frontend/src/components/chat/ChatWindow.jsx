@@ -343,7 +343,7 @@ export default function ChatWindow() {
       <div className={styles.header}>
         <div className={styles.headerLeft}>
           <img
-            src={activeRoom.avatarUrl || `https://api.dicebear.com/7.x/initials/svg?seed=${activeRoom.name}`}
+            src={activeRoom.avatarUrl || `https://api.dicebear.com/7.x/initials/svg?seed=${encodeURIComponent(activeRoom.name || "")}`}
             alt={activeRoom.name}
             className={styles.headerAvatar}
           />
@@ -559,7 +559,7 @@ export default function ChatWindow() {
                 onClick={() => insertMention(m.username)}
               >
                 <img
-                  src={m.avatarUrl || `https://api.dicebear.com/7.x/initials/svg?seed=${m.username}`}
+                  src={m.avatarUrl || `https://api.dicebear.com/7.x/initials/svg?seed=${encodeURIComponent(m.username || "")}`}
                   alt={m.username}
                   className={styles.mentionAvatar}
                 />

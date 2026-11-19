@@ -128,7 +128,7 @@ export default function ForwardModal({ message, onClose }) {
                 onMouseLeave={e => e.target.style.background = 'transparent'}
               >
                 <img
-                  src={room.avatarUrl || `https://api.dicebear.com/7.x/initials/svg?seed=${room.name}`}
+                  src={room.avatarUrl || `https://api.dicebear.com/7.x/initials/svg?seed=${encodeURIComponent(room.name || "")}`}
                   alt={room.name}
                   style={avatarStyle}
                 />

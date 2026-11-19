@@ -85,7 +85,7 @@ export default function Sidebar({ onNewChat, onOpenProfile, onOpenStarred }) {
             >
               <div className={styles.avatarWrap}>
                 <img
-                  src={room.avatarUrl || otherUser?.avatarUrl || `https://api.dicebear.com/7.x/initials/svg?seed=${room.name}`}
+                  src={room.avatarUrl || otherUser?.avatarUrl || `https://api.dicebear.com/7.x/initials/svg?seed=${encodeURIComponent(room.name || "")}`}
                   alt={room.name}
                   className={styles.avatar}
                 />
@@ -137,7 +137,7 @@ export default function Sidebar({ onNewChat, onOpenProfile, onOpenStarred }) {
       <div className={styles.footer}>
         <button className={styles.profileBtn} onClick={onOpenProfile}>
           <img
-            src={user?.avatarUrl || `https://api.dicebear.com/7.x/initials/svg?seed=${user?.username}`}
+            src={user?.avatarUrl || `https://api.dicebear.com/7.x/initials/svg?seed=${encodeURIComponent(user?.username || "")}`}
             alt={user?.username}
             className={styles.userAvatar}
           />

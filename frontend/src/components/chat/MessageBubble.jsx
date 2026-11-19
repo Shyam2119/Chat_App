@@ -199,7 +199,7 @@ export default function MessageBubble({ msg, isMine, showAvatar, onReply, onEdit
       {/* Avatar (only for others) */}
       {!isMine && showAvatar && (
         <img
-          src={msg.sender?.avatarUrl || `https://api.dicebear.com/7.x/initials/svg?seed=${msg.sender?.username}`}
+          src={msg.sender?.avatarUrl || `https://api.dicebear.com/7.x/initials/svg?seed=${encodeURIComponent(msg.sender?.username || "")}`}
           alt={msg.sender?.username}
           className={styles.avatar}
         />

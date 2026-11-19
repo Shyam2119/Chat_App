@@ -1,7 +1,7 @@
 from flask import Blueprint, request, jsonify
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from ..extensions import db
-from ..models import Message, Room, User, ReadReceipt, StarredMessage
+from ..models import Message, Room, User, ReadReceipt, StarredMessage, iso_utc
 
 messages_bp = Blueprint("messages", __name__)
 
@@ -167,7 +167,7 @@ def get_starred():
         "messages": [{
             "id": s.id,
             "message": s.message.to_dict(),
-            "starredAt": s.starred_at.isoformat(),
+            "starredAt": iso_utc(s.starred_at),
         } for s in pagination.items],
         "total": pagination.total,
         "pages": pagination.pages,

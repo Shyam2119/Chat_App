@@ -181,7 +181,7 @@ export default function RoomInfoDrawer({ room, onClose }) {
         {/* Room avatar and name */}
         <div style={{textAlign:'center', padding:'1rem 0'}}>
           <img
-            src={room.avatarUrl || `https://api.dicebear.com/7.x/initials/svg?seed=${room.name}`}
+            src={room.avatarUrl || `https://api.dicebear.com/7.x/initials/svg?seed=${encodeURIComponent(room.name || "")}`}
             alt={room.name}
             style={{width:'64px', height:'64px', borderRadius:'16px', objectFit:'cover', background:'var(--avatar-bg)'}}
           />
@@ -214,7 +214,7 @@ export default function RoomInfoDrawer({ room, onClose }) {
         {members.map(m => (
           <div key={m.id} style={memberStyle}>
             <img
-              src={m.avatarUrl || `https://api.dicebear.com/7.x/initials/svg?seed=${m.username}`}
+              src={m.avatarUrl || `https://api.dicebear.com/7.x/initials/svg?seed=${encodeURIComponent(m.username || "")}`}
               alt={m.username}
               style={memberAvatar}
             />
@@ -255,7 +255,7 @@ export default function RoomInfoDrawer({ room, onClose }) {
             {searchResults.map(u => (
               <div key={u.id} style={memberStyle}>
                 <img
-                  src={u.avatarUrl || `https://api.dicebear.com/7.x/initials/svg?seed=${u.username}`}
+                  src={u.avatarUrl || `https://api.dicebear.com/7.x/initials/svg?seed=${encodeURIComponent(u.username || "")}`}
                   alt={u.username}
                   style={memberAvatar}
                 />
